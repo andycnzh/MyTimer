@@ -9,7 +9,7 @@ using System.Resources;
 [assembly: AssemblyTitle("MyTimer")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("AndyCnzh")]
+[assembly: AssemblyCompany("AndyCnZh")]
 [assembly: AssemblyProduct("MyTimer")]
 [assembly: AssemblyCopyright("Copyright ©  2013")]
 [assembly: AssemblyTrademark("")]

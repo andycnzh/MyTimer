@@ -43,6 +43,9 @@ namespace MyTimer
             stopWatch = new Stopwatch();
             timer = new Timer(UpdateTextBlock, outputBlock, 0, 1000);
 
+            PhoneApplicationService.Current.ApplicationIdleDetectionMode = IdleDetectionMode.Disabled;
+            PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
+
             // 用于本地化 ApplicationBar 的示例代码
             //BuildLocalizedApplicationBar();
         }
