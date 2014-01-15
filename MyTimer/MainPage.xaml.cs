@@ -24,11 +24,15 @@ namespace MyTimer
         // 如果用户中途暂停，则暂停计时
         // 如果用户停止计时，则停止计时
 
-        Stopwatch stopWatch;
+        Stopwatch myStopWatch;
         Timer timer;
-        int interval = 0;
+        int totalMinutes = 0;
+        int remainingSeconds = 0;
+        int showMinute = 0;
+        int showSecond = 0;
         string msg;
-        bool enabledTimer = false;
+        bool timerEnabled = false;
+        bool timerStart = false;
         string defaultMinuterNum = "请输入一个整数";
         string defaultOutputBlock = "输入分钟数，系统开始倒计时，当倒计时结束，手机将会进行震动。在倒计时过程中，如果退出应用，则会停止倒计时。";
 
@@ -40,85 +44,138 @@ namespace MyTimer
         {
             InitializeComponent();
 
-            stopWatch = new Stopwatch();
-            timer = new Timer(UpdateTextBlock, outputBlock, 0, 1000);
+            myStopWatch = new Stopwatch();
+            timer = new Timer(UpdateTextBlock, DigitalCanvas, 0, 1000);
 
             // 禁用检测用户空闲
             PhoneApplicationService phoneAppService = PhoneApplicationService.Current;
             phoneAppService.UserIdleDetectionMode = IdleDetectionMode.Disabled;
+
+            if (!timerStart)
+            {
+                btnStop.IsEnabled = false;
+            }
             // 用于本地化 ApplicationBar 的示例代码
             //BuildLocalizedApplicationBar();
         }
 
-        private void clearBtn_Click(object sender, RoutedEventArgs e)
+        private void btnClear_Click(object sender, RoutedEventArgs e)
         {
-            minutenumBox.Text = defaultMinuterNum;
-            outputBlock.Text = defaultOutputBlock;
+            txtMinuteNum.Text = defaultMinuterNum;
+            txtOutputMsg.Text = defaultOutputBlock;
+            txtMinute.Text = "00";
+            txtSecond.Text = "00";
+            btnStop.Content = "暂停";
+            totalMinutes = 0;
+            remainingSeconds = 0;
 
-            stopWatch.Reset();
-            enabledTimer = false;
+            myStopWatch.Reset();
+            timerEnabled = false;
+            timerStart = false;
+            btnStop.IsEnabled = false;
         }
 
         private void btnStart_Click(object sender, RoutedEventArgs e)
         {
 
-            if (minutenumBox.Text.Trim() == "")
+            if (txtMinuteNum.Text.Trim() == "")
             {
                 MessageBox.Show("请输入倒计时分钟数");
                 return;
             }
             else
             {
-                bool parse = Int32.TryParse(minutenumBox.Text.Trim(), out interval);
+                bool parse = Int32.TryParse(txtMinuteNum.Text.Trim(), out totalMinutes);
                 if (!parse)
                 {
-                    interval = 0;
+                    totalMinutes = 0;
                     MessageBox.Show("请输入倒计时分钟数");
                     return;
                 }
             }
 
-            stopWatch.Restart();
-            enabledTimer = true;
-            outputBlock.Text = "倒计时开始\n";
+            showMinute = totalMinutes;
+            showSecond = 0;
+
+            myStopWatch.Restart();
+
+            timerEnabled = true;
+            timerStart = true;
+
+            btnStop.IsEnabled = true;
+            btnStop.Content = "暂停";
+            msg = "倒计时计时中......\n";
         }
 
         private void UpdateTextBlock(object state)
         {
-            if (enabledTimer)
+            if (timerStart)
             {
-                TextBlock tmp_output_Block = (TextBlock)state;
-
-                long elapseSecond = stopWatch.ElapsedMilliseconds / 1000;
-
-                if (elapseSecond == (long)interval * 60)
+                if (timerEnabled)
                 {
-                    stopWatch.Stop();
-                    enabledTimer = false;
-                    timerVibrate.Vibrate(TimeSpan.FromSeconds(3));
-                    msg = "定时器已完成！\n";
-                }
-                else
-                {
-                    msg = DateTime.Now.ToString("h:mm:ss") + " : " + elapseSecond + " s\n";
-                }
+                    Canvas tmp_DigitalCanvas = (Canvas)state;
 
-                tmp_output_Block.Dispatcher.BeginInvoke(delegate() { tmp_output_Block.Text = msg + tmp_output_Block.Text; });
+                    long elapseSecond = myStopWatch.ElapsedMilliseconds / 1000;
+
+                    remainingSeconds = (int)(totalMinutes * 60 - (int)elapseSecond);
+                    showMinute = remainingSeconds / 60;
+                    showSecond = remainingSeconds % 60;
+
+                    //如果remainingMinture=-1，则显示0
+                    showMinute = showMinute < 0 ? 0 : showMinute;
+
+                    if (remainingSeconds == 30)
+                    {
+                        timerVibrate.Vibrate(TimeSpan.FromSeconds(1));
+                        msg = "30s倒计时！\n";
+                    }
+                    else if (remainingSeconds == 0)
+                    {
+                        myStopWatch.Stop();
+                        timerEnabled = false;
+                        timerStart = false;
+                        btnStop.IsEnabled = false;
+
+                        timerVibrate.Vibrate(TimeSpan.FromSeconds(3));
+                        
+                        msg = "倒计时已完成！\n";
+                    }
+
+                    tmp_DigitalCanvas.Dispatcher.BeginInvoke(delegate()
+                    {
+                        txtMinute.Text = showMinute.ToString().PadLeft(2, '0');
+                        txtSecond.Text = showSecond.ToString().PadLeft(2, '0');
+                        txtOutputMsg.Text = msg;
+                    });
+                }
             }
         }
 
         private void txtMinuteNum_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (minutenumBox.Text.Trim() == defaultMinuterNum)
+            if (txtMinuteNum.Text.Trim() == defaultMinuterNum)
             {
-                minutenumBox.Text = "";
+                txtMinuteNum.Text = "";
             }
         }
 
-        private void stopBtn_Click(object sender, RoutedEventArgs e)
+        private void btnStop_Click(object sender, RoutedEventArgs e)
         {
-            stopWatch.Stop();
-            enabledTimer = false;
+            if (timerStart)
+            {
+                if (btnStop.Content.ToString() == "暂停")
+                {
+                    myStopWatch.Stop();
+                    timerEnabled = false;
+                    btnStop.Content = "继续";
+                }
+                else if (btnStop.Content.ToString() == "继续")
+                {
+                    myStopWatch.Start();
+                    timerEnabled = true;
+                    btnStop.Content = "暂停";
+                }
+            }
         }
 
         // 用于生成本地化 ApplicationBar 的示例代码
