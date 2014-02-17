@@ -1,4 +1,4 @@
-﻿<phone:PhoneApplicationPage
+﻿<phone:PhoneApplicationPage xmlns:UI="clr-namespace:Microsoft.Advertising.Mobile.UI;assembly=Microsoft.Advertising.Mobile.UI" 
     x:Class="MyTimer.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -58,6 +58,8 @@
                 <TextBlock x:Name="txtColon" HorizontalAlignment="Left" TextWrapping="NoWrap" Text=":" VerticalAlignment="Top" Height="179" Canvas.Left="170" Canvas.Top="100" Width="18" FontSize="60"/>
                 <TextBlock x:Name="txtSecond" TextAlignment="Center"  TextWrapping="NoWrap" Text="00"  Height="179" Canvas.Left="191" Canvas.Top="100" FontSize="72" FontWeight="Bold"  Width="173"/>
             </Canvas>
+            <UI:AdControl AdUnitId="162599" ApplicationId="9aca10f7-f468-4a28-889f-d750a1981a9a" Height="100" Margin="0,410,41,0" Width="480" />
+            <!--<UI:AdControl AdUnitId="Image480_80" ApplicationId="test_client" Height="180" Margin="30,410,41,19" Width="385" />-->
         </Grid>
 
         <!--取消注释，以显示对齐网格，从而帮助确保
