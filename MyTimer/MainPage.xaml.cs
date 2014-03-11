@@ -26,15 +26,20 @@ namespace MyTimer
 
         Stopwatch myStopWatch;
         Timer timer;
-        int totalMinutes = 0;
-        int remainingSeconds = 0;
+
+        int showHour = 0;
         int showMinute = 0;
         int showSecond = 0;
+
+        int totalSeconds = 0;
+        int alarmSeconds = 0;
+        int remainingSeconds = 0;
         string msg;
+
         bool timerEnabled = false;
         bool timerStart = false;
-        string defaultMinuterNum = "请输入一个整数";
-        string defaultOutputBlock = "输入分钟数，系统开始倒计时，当倒计时结束，手机将会进行震动。在倒计时过程中，如果退出应用，则会停止倒计时。";
+
+        string defaultOutputBlock = "设置计时时间，应用开始倒计时，当倒计时结束，手机将会进行3秒震动，可以设置提醒时间，应用会在指定时刻震动1秒进行提醒。在倒计时过程中，如果退出应用，则会停止倒计时。";
 
         // 调用手机的震动
         VibrationDevice timerVibrate = VibrationDevice.GetDefault();
@@ -61,15 +66,19 @@ namespace MyTimer
 
         private void btnClear_Click(object sender, RoutedEventArgs e)
         {
-            txtMinuteNum.Text = defaultMinuterNum;
+            //txtMinuteNum.Text = defaultMinuterNum;
             txtOutputMsg.Text = defaultOutputBlock;
+            txtHour.Text = "00";
             txtMinute.Text = "00";
             txtSecond.Text = "00";
             btnStop.Content = "暂停";
-            totalMinutes = 0;
+
+            totalSeconds = 0;
+            alarmSeconds = 0;
             remainingSeconds = 0;
 
             myStopWatch.Reset();
+
             timerEnabled = false;
             timerStart = false;
             btnStop.IsEnabled = false;
@@ -77,25 +86,23 @@ namespace MyTimer
 
         private void btnStart_Click(object sender, RoutedEventArgs e)
         {
+            TimeSpan settingTimeSpan = (TimeSpan)settingTimer.Value;
 
-            if (txtMinuteNum.Text.Trim() == "")
+            totalSeconds = settingTimeSpan.Hours * 60 * 60 + settingTimeSpan.Minutes * 60 + settingTimeSpan.Seconds;
+
+            TimeSpan alarmTimeSpan = (TimeSpan)alarmTimer.Value;
+
+            alarmSeconds = alarmTimeSpan.Minutes * 60 + alarmTimeSpan.Seconds;
+
+            if (totalSeconds < 1)
             {
-                MessageBox.Show("请输入倒计时分钟数");
+                MessageBox.Show("请设置计时时间，必须大于0秒");
                 return;
             }
-            else
-            {
-                bool parse = Int32.TryParse(txtMinuteNum.Text.Trim(), out totalMinutes);
-                if (!parse)
-                {
-                    totalMinutes = 0;
-                    MessageBox.Show("请输入倒计时分钟数");
-                    return;
-                }
-            }
 
-            showMinute = totalMinutes;
-            showSecond = 0;
+            showHour = settingTimeSpan.Hours;
+            showMinute = settingTimeSpan.Minutes;
+            showSecond = settingTimeSpan.Seconds;
 
             myStopWatch.Restart();
 
@@ -117,45 +124,68 @@ namespace MyTimer
 
                     long elapseSecond = myStopWatch.ElapsedMilliseconds / 1000;
 
-                    remainingSeconds = (int)(totalMinutes * 60 - (int)elapseSecond);
-                    showMinute = remainingSeconds / 60;
-                    showSecond = remainingSeconds % 60;
+                    remainingSeconds = (int)(totalSeconds - (int)elapseSecond);
 
-                    //如果remainingMinture=-1，则显示0
-                    showMinute = showMinute < 0 ? 0 : showMinute;
+                    Debug.WriteLine("remainingSeconds is {0}", remainingSeconds.ToString());
 
-                    if (remainingSeconds == 30)
+                    if (remainingSeconds >= 0)
                     {
-                        timerVibrate.Vibrate(TimeSpan.FromSeconds(1));
-                        msg = "30s倒计时！\n";
+                        showHour = remainingSeconds / 3600;
+                        showMinute = remainingSeconds / 60;
+                        showSecond = remainingSeconds % 60;
+
+                        Debug.WriteLine("调整前");
+                        Debug.WriteLine("showHour is {0}", showHour.ToString());
+                        Debug.WriteLine("showMinute is {0}", showMinute.ToString());
+                        Debug.WriteLine("showSecond is {0}", showSecond.ToString());
+
+
+                        //如果remainingMinture=-1，则显示
+                        showHour = showHour < 0 ? 0 : showHour;
+                        showMinute = showMinute < 0 ? 0 : showMinute;
+                        showSecond = showSecond < 1 ? 0 : showSecond;
+
+                        Debug.WriteLine("调整后");
+                        Debug.WriteLine("showHour is {0}", showHour.ToString());
+                        Debug.WriteLine("showMinute is {0}", showMinute.ToString());
+                        Debug.WriteLine("showSecond is {0}", showSecond.ToString());
+
+                        if (remainingSeconds == alarmSeconds)
+                        {
+                            timerVibrate.Vibrate(TimeSpan.FromSeconds(1));
+                            msg = "30s倒计时！\n";
+                        }
+                        else if (remainingSeconds == 0)
+                        {
+                            Debug.WriteLine("开始remaingSec为0的处理");
+                           
+                            timerEnabled = false;
+                            timerStart = false;
+                            btnStop.IsEnabled = false;
+
+                            Debug.WriteLine("开始最后的震动");
+
+                            timerVibrate.Vibrate(TimeSpan.FromSeconds(3));
+
+                            Debug.WriteLine("完成最后的震动");
+
+                            msg = "倒计时已完成！\n";
+                            Debug.WriteLine("结束remaingSec为0的处理");
+
+                            myStopWatch.Stop();
+
+                            Debug.WriteLine("计时器停止成功");
+                        }
+
+                        tmp_DigitalCanvas.Dispatcher.BeginInvoke(delegate()
+                        {
+                            txtHour.Text = showMinute.ToString().PadLeft(2, '0');
+                            txtMinute.Text = showMinute.ToString().PadLeft(2, '0');
+                            txtSecond.Text = showSecond.ToString().PadLeft(2, '0');
+                            txtOutputMsg.Text = msg;
+                        });
                     }
-                    else if (remainingSeconds == 0)
-                    {
-                        myStopWatch.Stop();
-                        timerEnabled = false;
-                        timerStart = false;
-                        btnStop.IsEnabled = false;
-
-                        timerVibrate.Vibrate(TimeSpan.FromSeconds(3));
-                        
-                        msg = "倒计时已完成！\n";
-                    }
-
-                    tmp_DigitalCanvas.Dispatcher.BeginInvoke(delegate()
-                    {
-                        txtMinute.Text = showMinute.ToString().PadLeft(2, '0');
-                        txtSecond.Text = showSecond.ToString().PadLeft(2, '0');
-                        txtOutputMsg.Text = msg;
-                    });
                 }
-            }
-        }
-
-        private void txtMinuteNum_GotFocus(object sender, RoutedEventArgs e)
-        {
-            if (txtMinuteNum.Text.Trim() == defaultMinuterNum)
-            {
-                txtMinuteNum.Text = "";
             }
         }
 
