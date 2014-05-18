@@ -47,21 +47,21 @@
         </StackPanel>
 
         <!--ContentPanel - 在此处放置其他内容-->
-        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
+        <Grid x:Name="ContentPanel" Margin="12,125,12,0" Grid.RowSpan="2">
             <cf4Toolkit:TimeSpanPicker Name="settingTimer" Margin="30,10,28,503" Header="计时时间" Value="0:0:5" />
             <cf4Toolkit:TimeSpanPicker Name="alarmTimer" Margin="28,97,28,428" Header="提醒时间" Max="0:1:0" Value="0:0:2"/>
-            <Button x:Name="btnStart" Content="开始" HorizontalAlignment="Left" Margin="30,215,0,0" VerticalAlignment="Top" Width="130" Click="btnStart_Click"/>
-            <Button x:Name="btnClear" Content="重置" HorizontalAlignment="Left" Margin="298,215,0,0" VerticalAlignment="Top" Width="130" Click="btnClear_Click"/>
-            <Button x:Name="btnStop" Content="暂停" HorizontalAlignment="Left" Margin="170,215,0,0" VerticalAlignment="Top" Width="130" Click="btnStop_Click"/>
-            <Canvas x:Name="DigitalCanvas" Margin="30,200,41,23">
-                <TextBlock x:Name="txtOutputMsg" HorizontalAlignment="Left" Margin="0,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="145" Width="370" Text="设置计时时间，应用开始倒计时，当倒计时结束，手机将会进行3秒震动，可以设置提醒时间，应用会在指定时刻震动1秒进行提醒。在倒计时过程中，如果退出应用，则会停止倒计时。" Canvas.Left="12" Canvas.Top="94"/>
-                <TextBlock x:Name="txtHour" TextAlignment="Center" TextWrapping="NoWrap" Text="00" Height="95" Canvas.Left="3" Canvas.Top="259" FontSize="72" FontWeight="Bold" Width="100"/>
-                <TextBlock x:Name="txtMinute" TextAlignment="Center" TextWrapping="NoWrap" Text="00" Height="95" Canvas.Left="144" Canvas.Top="259" FontSize="72" FontWeight="Bold" Width="84"/>
-                <TextBlock x:Name="txtColon1" HorizontalAlignment="Left" TextWrapping="NoWrap" Text=":" VerticalAlignment="Top" Height="85" Canvas.Left="113" Canvas.Top="264" Width="27" FontSize="60"/>
-                <TextBlock x:Name="txtSecond" TextAlignment="Center"  TextWrapping="NoWrap" Text="00"  Height="85" Canvas.Left="268" Canvas.Top="264" FontSize="72" FontWeight="Bold"  Width="92"/>
-                <TextBlock x:Name="txtColon2" HorizontalAlignment="Left" TextWrapping="NoWrap" Text=":" VerticalAlignment="Top" Height="85" Canvas.Left="241" Canvas.Top="264" Width="27" FontSize="60"/>
+            <Button x:Name="btnStart" Content="开始" HorizontalAlignment="Left" Margin="27,178,0,0" VerticalAlignment="Top" Width="130" Click="btnStart_Click" Height="72"/>
+            <Button x:Name="btnStop" Content="暂停" HorizontalAlignment="Left" Margin="162,178,0,0" VerticalAlignment="Top" Width="130" Click="btnStop_Click" Height="72"/>
+            <Button x:Name="btnClear" Content="重置" HorizontalAlignment="Left" Margin="297,178,0,0" VerticalAlignment="Top" Width="130" Click="btnClear_Click" Height="72"/>
+            <Canvas x:Name="DigitalCanvas" Margin="30,245,41,168" >
+                <TextBlock x:Name="txtOutputMsg" HorizontalAlignment="Left" Margin="0,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="145" Width="370" Text="设置计时时间，应用开始倒计时，当倒计时结束，手机将会进行3秒震动，可以设置提醒时间，应用会在指定时刻震动1秒进行提醒。在倒计时过程中，如果退出应用，则会停止倒计时。" Canvas.Left="8" Canvas.Top="5"/>
+                <TextBlock x:Name="txtHour" TextAlignment="Center" TextWrapping="NoWrap" Text="00" Height="95" Canvas.Left="8" Canvas.Top="132" FontSize="72" FontWeight="Bold" Width="100"/>
+                <TextBlock x:Name="txtMinute" TextAlignment="Center" TextWrapping="NoWrap" Text="00" Height="95" Canvas.Left="143" Canvas.Top="132" FontSize="72" FontWeight="Bold" Width="100"/>
+                <TextBlock x:Name="txtColon1" HorizontalAlignment="Left" TextWrapping="NoWrap" Text=":" VerticalAlignment="Top" Height="85" Canvas.Left="118" Canvas.Top="137" Width="27" FontSize="60"/>
+                <TextBlock x:Name="txtSecond" TextAlignment="Center"  TextWrapping="NoWrap" Text="00"  Height="95" Canvas.Left="273" Canvas.Top="132" FontSize="72" FontWeight="Bold"  Width="100"/>
+                <TextBlock x:Name="txtColon2" HorizontalAlignment="Left" TextWrapping="NoWrap" Text=":" VerticalAlignment="Top" Height="85" Canvas.Left="251" Canvas.Top="137" Width="27" FontSize="60"/>
             </Canvas>
-            <UI:AdControl AdUnitId="162606" ApplicationId="9aca10f7-f468-4a28-889f-d750a1981a9a" Height="80" Width="480" Margin="0,544,0,0"/>
+            <UI:AdControl AdUnitId="162606" ApplicationId="9aca10f7-f468-4a28-889f-d750a1981a9a" Height="80" Width="480" Margin="0,544,-24,-17"/>
             <!--<UI:AdControl AdUnitId="162599" ApplicationId="9aca10f7-f468-4a28-889f-d750a1981a9a" Height="100" Margin="0,410,41,0" Width="480" />-->
             <!--<UI:AdControl AdUnitId="Image480_80" ApplicationId="test_client" Height="180" Margin="30,410,41,19" Width="385" />-->
         </Grid>
